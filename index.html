@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hand Cricket — pencil edition</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css?v=3"/>
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+</head>
+<body>
+
+<!-- hand-drawn wobble filter -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="wobble">
+      <feTurbulence type="turbulence" baseFrequency="0.015" numOctaves="2" result="noise" seed="7"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="3.2" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="wobble-soft">
+      <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="2" result="noise" seed="3"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.8" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+</svg>
+
+<div class="wrap">
+
+  <!-- ========== HOME ========== -->
+  <section id="screen-home" class="screen active">
+    <header class="hero">
+      <div class="hero-hand" id="hero-hand"></div>
+      <h1>Hand Cricket</h1>
+      <p class="tagline">show your fingers &mdash; outthink the other hand</p>
+    </header>
+
+    <div class="panel">
+      <h2><svg class="h2-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1.2-4.2L16.5 4.5a2.1 2.1 0 0 1 3 3L8.2 18.8 4 20z"/><path d="M14.5 6.5l3 3"/></svg>your name</h2>
+      <input id="input-name" class="text-input" type="text" maxlength="14" placeholder="Player" autocomplete="off"/>
+    </div>
+
+    <div class="panel menu-panel">
+      <h2><svg class="h2-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M8.5 6.5c1.8 3.2 1.8 7.8 0 11"/><path d="M15.5 6.5c-1.8 3.2-1.8 7.8 0 11"/></svg>play</h2>
+      <button class="btn btn-big" id="btn-ai">vs Computer</button>
+      <button class="btn btn-big" id="btn-create">Create Room</button>
+      <button class="btn btn-big" id="btn-join-open">Join Room</button>
+      <div id="join-row" class="join-row hidden">
+        <input id="input-code" class="text-input" type="text" maxlength="12" placeholder="room code" autocomplete="off"/>
+        <button class="btn" id="btn-join">join</button>
+      </div>
+      <p id="net-status" class="net-status"></p>
+    </div>
+
+    <div class="panel rules-panel">
+      <h2><svg class="h2-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5c2.6-1 5.4-1 8 0v14c-2.6-1-5.4-1-8 0V5z"/><path d="M20 5c-2.6-1-5.4-1-8 0v14c2.6-1 5.4-1 8 0V5z"/></svg>the 10-second version</h2>
+      <ul class="rules">
+        <li>every ball, both sides secretly hold up <strong>1&ndash;6 fingers</strong></li>
+        <li><span class="ok">numbers differ</span> &rarr; the batter scores that many runs</li>
+        <li><span class="bad">numbers match</span> &rarr; the batter is <strong>OUT</strong></li>
+        <li>2 overs &middot; 3 wickets &middot; chase the total to win</li>
+      </ul>
+      <button class="btn" id="btn-rules">how to play (it's short)</button>
+    </div>
+  </section>
+
+  <!-- ========== LOBBY ========== -->
+  <section id="screen-lobby" class="screen">
+    <header class="hero">
+      <h1>Waiting room</h1>
+      <p class="tagline">share the link &mdash; no login, just play</p>
+    </header>
+
+    <div class="panel">
+      <h2><svg class="h2-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l2.8-2.8a4.5 4.5 0 0 0-6.4-6.4L11.6 6"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-2.8 2.8a4.5 4.5 0 0 0 6.4 6.4L12.4 18"/></svg>invite link</h2>
+      <div class="invite-box">
+        <input id="invite-link" class="text-input mono" type="text" readonly/>
+        <button class="btn" id="btn-copy">copy</button>
+      </div>
+      <p class="hint">or share the room code: <strong id="room-code-label">&hellip;</strong></p>
+    </div>
+
+    <div class="panel">
+      <h2><svg class="h2-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3.2"/><path d="M3 20c0-3.2 2.7-5.2 6-5.2s6 2 6 5.2"/><path d="M16 6.3a3.2 3.2 0 0 1 0 6.2"/><path d="M17.8 15.2c1.9.8 3.2 2.4 3.2 4.8"/></svg>players</h2>
+      <div id="lobby-players" class="lobby-players"></div>
+      <div class="team-pick" id="team-pick">
+        <button class="btn team-btn" data-team="A">join team <span class="team-tag tag-a">A</span></button>
+        <button class="btn team-btn" data-team="B">join team <span class="team-tag tag-b">B</span></button>
+      </div>
+      <p class="hint">pick a side first &mdash; the first person on a team becomes its captain</p>
+    </div>
+
+    <div class="panel lobby-actions">
+      <button class="btn btn-big" id="btn-start" disabled>start the toss</button>
+      <button class="btn" id="btn-leave">leave</button>
+      <p class="hint" id="lobby-hint">need at least 1 player per team</p>
+      <p class="hint">the captains call the toss, choose bat or bowl, and set their team's lineup</p>
+    </div>
+  </section>
+
+  <!-- ========== TOSS ========== -->
+  <section id="screen-toss" class="screen">
+    <header class="hero">
+      <h1>The Toss</h1>
+      <p class="tagline">captains call it &mdash; winner picks bat or bowl</p>
+    </header>
+
+    <div class="steps" id="toss-steps" aria-hidden="true">
+      <span class="step" data-step="call">1. call it</span>
+      <span class="step" data-step="choice">2. bat or bowl</span>
+      <span class="step" data-step="orders">3. set the lineup</span>
+    </div>
+
+    <!-- step: both captains call -->
+    <div class="panel" id="toss-call-panel">
+      <h2><svg class="h2-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M9 8.5v7M15 8.5v7M9 12h6"/></svg>captains, call it</h2>
+      <p class="hint" id="toss-call-msg">your pick stays hidden until both captains have chosen</p>
+      <div class="toss-callers">
+        <div class="caller" id="caller-A">
+          <div class="caller-team">Team <span class="team-tag tag-a">A</span></div>
+          <div class="caller-captain" id="caller-cap-A">&hellip;</div>
+          <div class="caller-btns" id="caller-btns-A">
+            <button class="btn call-btn" data-team="A" data-call="H">heads</button>
+            <button class="btn call-btn" data-team="A" data-call="T">tails</button>
+          </div>
+          <div class="caller-status" id="caller-status-A">waiting&hellip;</div>
+        </div>
+        <div class="coin-slot">
+          <div class="coin-jump" id="coin-jump">
+            <div class="coin" id="toss-coin">?</div>
+            <div class="coin-shadow" id="coin-shadow"></div>
+          </div>
+        </div>
+        <div class="caller" id="caller-B">
+          <div class="caller-team">Team <span class="team-tag tag-b">B</span></div>
+          <div class="caller-captain" id="caller-cap-B">&hellip;</div>
+          <div class="caller-btns" id="caller-btns-B">
+            <button class="btn call-btn" data-team="B" data-call="H">heads</button>
+            <button class="btn call-btn" data-team="B" data-call="T">tails</button>
+          </div>
+          <div class="caller-status" id="caller-status-B">waiting&hellip;</div>
+        </div>
+      </div>
+      <p class="toss-result" id="toss-result"></p>
+      <p class="hint center-hint">only your captain can press a button &mdash; everyone else just watches the coin</p>
+    </div>
+
+    <!-- step: winner chooses bat / bowl -->
+    <div class="panel hidden" id="toss-choice-panel">
+      <h2 id="toss-winner-text">&hellip;</h2>
+      <div class="choice-row" id="choice-row">
+        <button class="btn btn-big choice-btn" data-choice="bat">bat first
+          <span class="choice-sub">you score runs until you're out</span>
+        </button>
+        <button class="btn btn-big choice-btn" data-choice="bowl">bowl first
+          <span class="choice-sub">you try to get their batters out</span>
+        </button>
+      </div>
+      <p class="hint" id="choice-wait">waiting for the captain's call&hellip;</p>
+    </div>
+
+    <!-- step: captains set lineups -->
+    <div class="panel hidden" id="toss-orders-panel">
+      <h2><svg class="h2-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.4"/><circle cx="4.5" cy="12" r="1.4"/><circle cx="4.5" cy="18" r="1.4"/></svg>set your lineup</h2>
+      <p class="hint">click a name to drop it into the next empty spot. click a name in the list to take it back out.</p>
+      <div class="orders-grid">
+        <div class="order-box" id="order-box-bat">
+          <div class="order-title">who bats, in order <span class="order-team" id="order-team-bat"></span></div>
+          <div class="order-hint">1st = first batter. when someone's out, the next one in line walks in.</div>
+          <div class="order-list" id="order-list-bat"></div>
+          <div class="order-pool" id="order-pool-bat"></div>
+          <button class="linklike" data-clear="bat">start this list over</button>
+        </div>
+        <div class="order-box" id="order-box-bowl">
+          <div class="order-title">who bowls, in order <span class="order-team" id="order-team-bowl"></span></div>
+          <div class="order-hint">1st = opening bowler. you can swap the bowler between overs later.</div>
+          <div class="order-list" id="order-list-bowl"></div>
+          <div class="order-pool" id="order-pool-bowl"></div>
+          <button class="linklike" data-clear="bowl">start this list over</button>
+        </div>
+      </div>
+      <button class="btn btn-big" id="btn-lock-orders">lock in my lineup</button>
+      <p class="hint" id="orders-status"></p>
+    </div>
+
+    <div class="panel hidden" id="toss-wait-panel">
+      <p class="pick-status" id="toss-wait-text">waiting for captains&hellip;</p>
+    </div>
+  </section>
+
+  <!-- ========== GAME ========== -->
+  <section id="screen-game" class="screen">
+    <div class="scoreboard panel">
+      <div class="score-side" id="score-A">
+        <div class="score-team">Team <span class="team-tag tag-a">A</span></div>
+        <div class="score-runs" id="runs-A">0</div>
+        <div class="score-sub">
+          <span id="wkts-A">wickets: <span class="tally" id="tally-A"></span></span>
+          <span id="overs-A">0.0 ov</span>
+        </div>
+      </div>
+      <div class="score-mid">
+        <div id="innings-label" class="innings-label">1st innings</div>
+        <div id="chase-label" class="chase-label"></div>
+      </div>
+      <div class="score-side" id="score-B">
+        <div class="score-team">Team <span class="team-tag tag-b">B</span></div>
+        <div class="score-runs" id="runs-B">0</div>
+        <div class="score-sub">
+          <span id="wkts-B">wickets: <span class="tally" id="tally-B"></span></span>
+          <span id="overs-B">0.0 ov</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="arena panel" id="arena">
+      <div class="arena-player">
+        <div class="arena-name" id="you-name">You</div>
+        <div class="hand-slot" id="hand-you"></div>
+        <div class="pick-badge" id="pick-you">?</div>
+      </div>
+      <div class="arena-vs">
+        <div id="vs-mark" class="vs-mark">vs</div>
+        <div id="result-burst" class="result-burst hidden"></div>
+      </div>
+      <div class="arena-player">
+        <div class="arena-name" id="them-name">Them</div>
+        <div class="hand-slot" id="hand-them"></div>
+        <div class="pick-badge" id="pick-them">?</div>
+      </div>
+    </div>
+
+    <!-- bowling captain picks next over's bowler (between overs only) -->
+    <div class="panel hidden" id="bowler-panel">
+      <h2><svg class="h2-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M8.5 6.5c1.8 3.2 1.8 7.8 0 11"/><path d="M15.5 6.5c-1.8 3.2-1.8 7.8 0 11"/></svg>over finished &mdash; pick the next bowler</h2>
+      <div class="bowler-row" id="bowler-row"></div>
+      <p class="hint" id="bowler-hint"></p>
+    </div>
+
+    <div class="panel pick-panel">
+      <div id="pick-status" class="pick-status">pick a number</div>
+      <div class="num-row" id="num-row">
+        <button class="num-btn" data-n="1"></button>
+        <button class="num-btn" data-n="2"></button>
+        <button class="num-btn" data-n="3"></button>
+        <button class="num-btn" data-n="4"></button>
+        <button class="num-btn" data-n="5"></button>
+        <button class="num-btn" data-n="6"></button>
+      </div>
+      <p class="hint center-hint">hold up the same number of fingers you'd show a friend &mdash; but keep it secret until both of you lock in</p>
+    </div>
+
+    <div class="panel log-panel">
+      <h2><svg class="h2-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 4v16"/><path d="M12 9.5h4M12 13.5h4"/></svg>scorer's notebook</h2>
+      <div id="ball-log" class="ball-log"></div>
+    </div>
+
+    <!-- innings break: chasing captain may re-set batting order -->
+    <div class="panel hidden" id="break-panel">
+      <h2><svg class="h2-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V4"/><path d="M6 5.5h11l-2.2 3.8L17 13H6"/></svg>innings over &mdash; set your chase order</h2>
+      <p class="hint">captain: click the names in the order they should bat to hunt down the target. everyone else, sit tight.</p>
+      <div class="order-box" id="break-order-box">
+        <div class="order-title">batting order to chase <span class="order-team" id="break-order-team"></span></div>
+        <div class="order-list" id="break-order-list"></div>
+        <div class="order-pool" id="break-order-pool"></div>
+        <button class="linklike" data-clear="break">start this list over</button>
+      </div>
+      <button class="btn btn-big" id="btn-break-ready">ready &mdash; start the chase</button>
+      <p class="hint" id="break-status"></p>
+    </div>
+  </section>
+
+  <!-- ========== RESULT ========== -->
+  <section id="screen-result" class="screen">
+    <div class="result-wrap">
+      <div id="result-stamp" class="result-stamp">WIN</div>
+      <div class="panel result-score">
+        <h2 id="result-title">match over</h2>
+        <div class="final-line" id="final-line"></div>
+        <div class="final-detail" id="final-detail"></div>
+      </div>
+      <div class="result-actions">
+        <button class="btn btn-big" id="btn-rematch">rematch</button>
+        <button class="btn" id="btn-home">home</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== RULES ========== -->
+  <section id="screen-rules" class="screen">
+    <header class="hero">
+      <h1>How to play</h1>
+      <p class="tagline">hand cricket, explained like a friend would</p>
+    </header>
+
+    <div class="panel">
+      <h2>the whole game in one breath</h2>
+      <p>Every ball, both sides secretly hold up <strong>1 to 6 fingers</strong>. Then you show them at the same time.</p>
+      <ul class="rules">
+        <li><span class="ok">Different numbers</span> &rarr; the batter scores <strong>their own number</strong> in runs. Held up 5? Nice, 5 runs.</li>
+        <li><span class="bad">Same number</span> &rarr; the batter is <strong>OUT</strong>. Classic hand cricket. No mercy.</li>
+      </ul>
+      <p class="hint">that's it. that's the core. everything else is just bookkeeping.</p>
+    </div>
+
+    <div class="panel">
+      <h2>what a match looks like</h2>
+      <ul class="rules">
+        <li>each team bats <strong>once</strong>: 2 overs (that's 12 balls) and 3 wickets, whichever ends first.</li>
+        <li>wickets left after 12 balls? use them wisely &mdash; each OUT costs one, and the next batter in your lineup walks in.</li>
+        <li>team 2 chases the score. target = team 1's runs <strong>+ 1</strong>. Reach it and you win. Run out of balls or wickets first and you don't.</li>
+        <li>same score at the end? it's a <strong>tie</strong>. everybody shrugs, nobody loses.</li>
+      </ul>
+    </div>
+
+    <div class="panel">
+      <h2>the batting &amp; bowling bit</h2>
+      <ul class="rules">
+        <li>your batter <strong>stays in until they're OUT</strong>. no running between wickets, no strike rotation &mdash; this is finger cricket, not Lord's.</li>
+        <li>a bowler bowls a <strong>whole over</strong> (6 balls). only <em>between</em> overs can the captain swap in a different bowler.</li>
+        <li>odd runs don't switch the strike. ever. your number, your runs, your problem.</li>
+      </ul>
+    </div>
+
+    <div class="panel">
+      <h2>teams, captains &amp; the toss</h2>
+      <ul class="rules">
+        <li>in a room, everyone picks team A or B. the first person on a team is the <strong>captain</strong> (you can pass the crown by clicking "make captain").</li>
+        <li>both captains <strong>secretly</strong> call heads or tails. neither can peek &mdash; calls lock until both are in.</li>
+        <li>toss winner chooses to <strong>bat or bowl first</strong>.</li>
+        <li>then each captain sets the <strong>lineup</strong>: batting order (who's next when someone's out) and bowling order (who starts each over).</li>
+        <li>at the innings break, the chasing captain gets one more shot: they can re-order the batters before the chase starts.</li>
+      </ul>
+      <p class="hint">1-player teams skip the lineup step automatically &mdash; there's nobody else to order.</p>
+    </div>
+
+    <div class="panel">
+      <h2>no cheaters, we checked</h2>
+      <p>your pick is locked in (hashed, whatever that means) <em>before</em> the other side's pick is revealed. so nobody can change their fingers at the last second. we're not animals.</p>
+    </div>
+
+    <div class="panel">
+      <h2>tiny tips</h2>
+      <ul class="rules">
+        <li>people almost never throw the same number twice in a row. exploit that.</li>
+        <li>when chasing, the captain can stack the order so their best guesser bats first.</li>
+        <li>bowling captain: match your bowler against a batter they'll fluster. it's just rock-paper-scissors with fingers.</li>
+      </ul>
+    </div>
+
+    <div class="result-actions">
+      <button class="btn btn-big" id="btn-rules-back">got it &mdash; back to the game</button>
+    </div>
+  </section>
+
+  <footer>
+    built for <a href="https://crescent.hackclub.com" target="_blank" rel="noopener">Crescent</a>
+    &middot; <button class="linklike" id="btn-rules-foot">how to play</button>
+  </footer>
+</div>
+
+  <script src="js/hands.js?v=3"></script>
+  <script src="js/game.js?v=3"></script>
+  <script src="js/net.js?v=3"></script>
+  <script src="js/main.js?v=3"></script>
+</body>
+</html>

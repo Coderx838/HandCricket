@@ -1,0 +1,904 @@
+/* style.css the theme for the game*/
+
+:root{
+    --paper: #fdfaf3;
+    --card: #fffdf7;
+    --ink: #555;
+    --ink-dark: #3a3a3a;
+    --ink-light: #999;
+    --line: #666;
+    --accent: #e8dcc8;
+    --ok: #5a8f5a;
+    --bad: #b55555;
+    --skin: #f7efe3;
+    --team-a: #5a8f5a;
+    --team-b: #5577aa;
+
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Patrick Hand", "Cosmic Sans MS", cursive;
+    font-size: 18px;
+    line-height: 1.5px;
+    min-height: 100%;
+}
+
+/*  faint notebook line to make theme a notebook(yeh)*/
+
+body {
+    background-image:
+        repeating-linear-gradient(
+            transparent,
+            transparent 27px,
+            rgba(100, 120, 160, 0.07) 27px,
+            rgba(100, 120, 160, 0.07) 28px
+        );
+}
+
+.wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 28px 16px 48px;
+}
+
+/*   screens   */
+
+.screen { display: none;}
+.screen.active { display: block; animation: fadein 0.25s ease;}
+@keyframes fadein {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: none; }
+}
+
+/* ----------------- hero / header ------------------- */
+.hero {
+    text-align: center;
+    margin-bottom: 28px ;
+}
+
+.hero-hand {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 4px;
+    animation: wave 2.4s ease-in-out infinite;
+    transform-origin: 70% 80%;
+}
+
+@keyframes wave {
+    0%, 100% { transform: rotate(-4deg);}
+    50% { transform: rotate(6deg); }
+}
+
+h1 {
+    font-family: "Caveat", cursive;
+    font-size: 3.6rem;
+    margin: 0 0 4px;
+    color: var(--ink-dark);
+    letter-spacing: 1px;
+    font-weight: 700;
+}
+
+.tagline {
+    color: var(--ink-light);
+    font-size: 1.15rem;
+    margin: 0;
+}
+
+/*--------------------- panels (woobly card) --------------------- */
+
+.panel {
+    background: var(--card);
+    border: 2.5px solid var(--line);
+    border-radius: 16px 10px 14px 8px;
+    padding: 18px 20px;
+    margin-bottom: 18px;
+    position: relative;
+    filter: url(#wobble);
+}
+.panel h2{
+    font-family: "Caveat", cursive;
+    font-size: 1.7rem;
+    margin: 0 0 12px;
+    color: var(--ink-dark);
+}
+.hint {
+    color: var(--ink-light);
+    font-size: 0.95rem;
+    margin: 8px 0 0;
+}
+.muted { color: var(--ink-light);}
+.hidden { display: none !important;}
+.ok { color: var(--ok);}
+.bad { color: var(--bad); font-weight: bold;}
+
+/* ---------- svg icons ------------- */
+
+
+.h2-ico {
+    width: 1.15em;
+    height: 1.15em;
+    margin-right: 8px;
+    vertical-align: -0.18em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    color: var(--ino-dark);
+}
+
+.ico {
+    width: 1em;
+    height: 1em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    color: var(--ink-dark);
+}
+
+
+/* -------------- buttons -------------------- */
+
+.linklike {
+    font-family: "Patrick Hand", cursive;
+    font-size: 0.95rem;
+    background: none;
+    border: none;
+    color: var(--ink-light);
+    text-decoration: underline dotted;
+    cursor: pointer;
+    padding: 2px 4px;
+    margin-top: 6px;
+}
+.linklike:hover { color: var(--ink-dark); }
+
+
+/* -------------- input ---------------------- */
+.text-input {
+    font-family: "Patrick Hand", cursive;
+    font-size: 1.1rem;
+    width:100%;
+    padding: 10px 14px;
+    border: 2.5px solid var(--line);
+    border-radius: 12px 8px 12px 7px;
+    color: var(--paper);
+    outline: none;
+}
+.text-input {
+    font-family: "Patrick Hand", cursive;
+    font-size: 1.1rem;
+    width: 100%;
+    padding: 10px 14px;
+    border: 2.5 solid var(--line);
+    border-radius: var(--paper);
+    color: var(--ink-dark);
+    outline: none;
+}
+
+.text-input:focus {
+    border-color: var(--ink-dark);
+    background: #fff;
+}
+.text-input.mono {
+    font-family: "Courier New",  monospace;
+    font-size: 0.95rem;
+}
+
+.btn {
+    font-family: "Patrick Hand", cursive;
+    font-size: 1.1rem;
+    background: var(--card);
+    color: var(--ink-dark);
+    border: 2.5px solid var(--line);
+    border-radius: 12px 8px 14px 6px;
+    padding: 10px 22px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    margin: 6px 6px 0 0;
+}
+.btn:hover { background: var(--accent)}
+.btn:active { transform: translate(1px, 1px);}
+.btn:disabled { opacity: 0.4; cursor: default;}
+.btn:disabled:hover { background: var(--card);}
+.btn-big {
+    display: block;
+    width: 100%;
+    font-size: 1.35rem;
+    padding: 14px 18px;
+    margin: 10px;
+}
+
+.btn.active {
+    background: var(--accent);
+    border-color: var(--ink-dark);
+}
+
+.menu-panel .btn-big:first-of-type { margin-top: 4px;}
+
+.join-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    align-items: stretch;
+}
+.join-row .text-input { flex: 1;}
+.join-row .btn { margin-top: 0 ;}
+
+.net-status {
+    color: var(--bad);
+    min-height: 1.2rem;
+    font-size: 0.95rem;
+    margin: 8px 0 0;
+}
+
+/*  ------------------ rules ---------------------- */
+
+.rules {
+    margin: 0;
+    padding-left: 1.1rem;
+}
+.rule li { margin: 4px 0;}
+
+/*  lobby  */
+
+.invite-box {
+    display: flex;
+    gap: 8px;
+}
+.invite-box .text-input {flex: 1;}
+.invite-box .btn { margin-top: 0;}
+
+.lobby-players { margin-bottom: 12px;}
+.lobby-p {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 4px;
+    border-bottom: 1.5px dotted #bbb;
+}
+
+.lobby-p:last-child { border-bottom: none;}
+.lobby-name { color: var(--ink-dark); font-size: 1.15rem;}
+
+.team-pick {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+
+}
+
+.team-tag {
+    display: inline-block;
+    font-weight: bold;
+    border: 2px solid currentColor;
+    border-radius: 8px 5px 9px 4px;
+    padding: 0 8px;
+    font-size: 0.9rem;
+}
+.tag-a { color: var(--team-a);}
+.tag-b {color: var(--team-b);}
+
+.lobby-actions .btn { display: inline-block;}
+
+/* ----------- scoreboard --------------- */
+
+.scoreboard {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 8px;
+    padding: 14px 12px;
+    text-align: center;
+}
+.scrore-side { flex: 1; min-width: 0;}
+.score-team {
+    font-family: "Caveat", cursive;
+    font-size: 1.3rem;
+    color: var(--ink-dark);
+}
+
+.score-runs {
+    font-family: "Caveat", cursive;
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--ink-dark);
+    line-height: 1;
+    margin: 4px 0;
+}
+
+.score-sub {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 0.95rem;
+    color: var(--ink-light);
+}
+
+.score-mid {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 8px;
+    border-left: 2px  dashed var(--line);
+    border-right: 2px dashed var(--line);
+    min-width: 120px;
+}
+
+.innings-label {
+    font-family: "Caveat", cursive;
+    font-size: 1.35rem;
+    color: var(--ink-dark);
+}
+.chase-label {
+    font-size: 0.95rem;
+    color: var(--bad);
+}
+
+/*  wicket tally strokes*/
+
+.tally { display: inline-flex; gap: 4px; align-items: flex-end; margin-left: 4px;}
+.tally .stroke {
+    display: inline-block;
+    width: 3px;
+    height: 14px;
+    background: var(--bad);
+    border-radius: 2px;
+    transform: rotate(8deg);
+    animation: strokeIn 0.25s ease;
+}
+.tally .stroke:nth-child(even) { transform: rotate(-6deg); }
+@keyframes strokeIn {
+    from { height: 0; opacity: 0;}
+    to { height: 14px ; opacity: 1;}
+}
+.tally .none { color: var(--ink-light);}
+
+
+/* ------------ arena ----------- */
+
+.arena {
+    display:flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 4px;
+    padding: 20px 10px;
+    min-height: 220px;
+    text-align: center;
+    transform: transform 0.05s;
+}
+
+.arena.shake { animation: shake 0.35s linear;}
+@keyframes shake {
+    0%, 100% { transform: translateX(0);}
+    20% { transform: translateX(-7px) rotate(-0.5deg); }
+    40% { transform: translateX(6px) rotate(0.5deg); }
+    60% { transform: translateX(-5px);}
+    80% { transform: translateX(4px);}
+}
+
+.arena-player { flex: 1; min-width: 0; }
+.arena-name {
+    font-size: 1.05rem;
+    color: var(--ink-light);
+    margin-bottom: 6px;
+    min-height: 1.4em;
+
+}
+
+.hand-slot {
+    min-height: 140px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.hand-slot .hand-svg {
+    animation: handIn 0.35s cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+
+@keyframes handIn {
+    from { transform: scale(0.4) translateY(20px); opacity: 0;}
+    to { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.pick-badge {
+    font-family: "Caveat", cursive;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--ink-dark);
+    margin-top: 2px;
+}
+
+.arena-vs {
+    position: relative;
+    width: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.vs-mark {
+    font-family: "Caveat", cursive;
+    font-size: 2rem;
+    color: var(--ink-light);
+}
+
+.result-burst {
+    position: absolute;
+    font-family: "Caveat", cursive;
+    font-size: 2.4rem;
+    animation: pop 0.4s cubic-bezier(0.2, 1.6, 0.4, 1);
+    white-space: nowrap;
+}
+
+.result-burst.runs { color: var(--ok);}
+.result-burst.out { color: var(--bad);}
+.result-burst.hidden { display: none;}
+@keyframes pop {
+    from { transform: scale(0.2); opacity: 0;}
+    60% { transform: scale(1.25); opacity: 1;}
+    to { transform: scale(1); opacity: 1;}
+
+} 
+
+/* ------------------- Hand Svg styles -------------------- */
+
+.hand-svg .hand-palm,
+.hand-svg .hand-finger,
+.hand-svg .hand-thumb,
+.hand-svg .hand-fold,
+.hand-svg .hand-wrist {
+    fill: var(--skin);
+    stroke: var(--ink-dark);
+    stroke-width: 2.8;
+    stroke-linecap: round;
+
+}
+
+.hand-svg .hand-fold{
+    fill: #e8dfd0;
+    stroke-width: 2.4;
+
+}
+
+.hand-svg .hand-thumb-tuck,
+.hand-svg .hand-crease {
+    fill: none;
+    stroke: var(--ink-dark);
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.hand-svg .hand-wrist{
+    fill: var(--skin);
+}
+.hand-svg .hand-spark {
+    fill: none;
+    stroke:  var(--ink-dark);
+    stroke-width: 2.4;
+    stroke-linecap: round;
+
+}
+
+/* ---------- pick button ----------------- */
+
+.pick-status {
+    text-align: center;
+    font-family: "Caveat", cursive;
+    font-size: 1.45rem;
+    color: var(--ink-dark);
+    margin-bottom: 12px;
+    min-height: 1.4em;
+}
+.num-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+}
+
+.num-btn {
+    font-family: "Patrick Hand", cursive;
+    background: var(--paper);
+    border: 2.5px solid var(--line);
+    border-radius: 40% 45% 42% 48% / 45% 40% 48% 42%;
+    padding: 8px 4px 6px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    transition: background 0.12s, transform 0.1s;
+    min-height: 88px;
+}
+
+.num-btn:hover:not(:disabled){
+    background: var(--accent);
+    transform: translateY(-2px);
+}
+.num-btn:active:not(:disabled) { transform: translateY(1px);}
+.num-btn:disabled { opacity: 0.45; cursor: default;}
+.num-btn.picked {
+    background: var(--accent);
+    border-color: var(--ink-dark);
+    box-shadow: 2px 2px 0 var(--ink-light);
+}
+
+.num-btn .hand-svg { pointer-events: none;}
+.num-label {
+    font-family: "Caveat", cursive;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--ink-dark);
+    line-height: 1;
+}
+
+/* -------------- log -------------------- */
+
+.log-panel h2 { margin-bottom: 8px;}
+.ball-log {
+    max-height: 160px;
+    overflow-y: auto;
+    font-size: 1.05px;
+}
+.log-line {
+    padding: 4px 2px;
+    border-bottom: 1px dotted #ccc;
+}
+.log-line:last-child { border-bottom: none;}
+.log-ball { color: var(--ink-light); margin-right: 6px;}
+.log-detail { color: var(--ink-light); font-size: 0.9em; margin-left: 8px;}
+
+
+/* ----- result ---------- */
+
+.result-wrap {
+    text-align: center;
+    padding-top: 20px;
+}
+.result-stamp {
+    font-family: "Caveat", cursive;
+    font-size: 5.5rem;
+    font-weight: 700;
+    letter-spacing: 4px;
+    display: inline-block;
+    padding: 8px 28px;
+    border: 6px solid currentColor;
+    border-radius: 12px 8px 14px 6px;
+    transform: rotate(-8deg);
+    margin-bottom: 24px;
+    animation: slam 0.45s cubic-bezier(0.2, 1.5, 0.4, 1);
+    filter: url(#wobble);
+}
+
+.result-stamp.win { color: var(--ok);}
+.result-burst.lose { color: var(--bad);}
+.result-stamp.tie { color: var(--ink-dark)}
+
+@keyframes slam {
+    0% { transform: rotate(-8deg) scale(3); opacity: 0;}
+    70% { transform: rotate(-8deg) scale(0.92); opacity: 1;}
+    100% { transform: rotate(-8deg) scale(1); opacity: 1;}
+}
+.final-line {
+    font-family: "Caveat", cursive;
+    font-size: 2rem;
+    color: var(--ink-dark);
+}
+
+.final-detail { color: var(--ink-light);}
+.result-actions { margin-top: 18px;}
+.result-actions .btn-big { max-width: 280px; margin-left: auto; margin-right: auto;}
+
+
+/* -------------- footer ----------- */
+
+footer {
+    text-align: center;
+    color: var(--ink-light);
+    font-size: 0.95rem;
+    margin-top: 28px;
+}
+footer a {color: var(--ink);}
+
+/* ------------- caption / lobby roles ------------- */
+
+.caption-badge {
+    display: inline-block;
+    font-size: 0.8em;
+    color: #a07d20;
+    border: 1.5px solid #a07d20;
+    border-radius: 8px 5px 9px 4px;
+    padding: 0 6px;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+.caption-btn{
+    font-size: 0.9rem;
+    padding: 2px 10px;
+    margin: 0;
+    border-width: 2px;
+}
+.lobby-p .side { display: flex; align-items:  center; gap: 8px;}
+
+
+/* ------- toss screen ------ -- */
+
+.steps {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.step {
+    color: var(--ink-dark);
+    border: 2.5px solid var(--ink-dark);
+    border: 2px dashed #ccc;
+    border-radius: 10px 6px 11px 5px;
+    padding: 2px 12px;
+    background: var(--card);
+}
+
+.step.active {
+    color: var(--ink-dark);
+    border: 2.5px solid var(--ink-dark);
+    border-radius: var(--accent);
+    font-weight: bold;
+}
+
+.step.done {
+    color: var(--ok);
+    border-style: solid;
+    border-color: var(--ok);
+}
+.toss-callers {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.caller {
+    flex: 1;
+    text-align: center;
+    border: 2px dashed var(--line);
+    border-radius: 14px 9px 15px 7px;
+    padding: 12px 8px;
+}
+
+.caller.mine { border-color: var(--ink-dark); background: var(--accent); }
+.caller-team { font-family: "Caveat", cursive; font-size: 1.3rem; }
+.caller-captain { color: var(--ink-light); font-size: 0.95rem; min-height: 1.3em; }
+.caller-btns { margin-top: 8px; display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
+.caller-btns .btn { margin: 0; padding: 6px 12px; font-size: 0.95rem; }
+.caller-status { margin-top: 6px; font-size: 0.9rem; color: var(--ink-light); min-height: 1.2em; }
+.caller-status.locked { color: var(--ok); font-weight: bold; }
+
+
+/* ------- coin: animation ------- */
+
+.coin-slot {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    width: 96px;
+    perspective: 600px;
+    padding-bottom: 14px;
+}
+
+.coin-jump { position: relative;}
+.coin {
+    width: 64px;
+    height: 64px;
+    border: 3px solid var(--ink-dark);
+    border-radius: 50%;
+    background: 
+        radial-gradient(circle at 32% 28%, #fff8e6 0%, var(--accent) 55% , #dcc9a4 100%);
+    font-family: "Caveat", cursive;
+    font-size: 2.3rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-dark);
+    box-shadow: inset -3px -4px 0 rgba(0,0,0,0.08);
+    transform-style: preserve-3d;
+    position: relative;
+    z-index: 2;    
+}
+
+.coin::after {
+    content: "";
+    position: absolute;
+    inset: 5px;
+    border: 1.5px dashed rgba(90, 80, 60, 0.45);
+    border-radius: 50%;
+}
+
+.coin-shadow {
+    position: absolute;
+    left: 50%;
+    bottom: -12px;
+    width: 58px;
+    height: 12px;
+    background: rgba(60, 50, 40, 0.22);
+    border-radius: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+
+}
+
+.coin-jump.flipping { animation: coinJump 1.3s ease-in-out;}
+@keyframes coinJump {
+  0% { transform: translateY(0); }
+  42% { transform: translateY(-54px); }
+  100% { transform: translateY(0); }
+}
+
+.coin-jump.flipping .coin { animation: coinSpin 1.3s cubic-bezier(0.3, 0.05, 0.35, 1); }
+@keyframes coinSpin {
+  0% { transform: rotateX(0) rotateY(0); }
+  100% { transform: rotateX(1800deg) rotateY(720deg); }
+}
+.coin-jump.flipping .coin-shadow { animation: shadowPulse 1.3s ease-in-out; }
+@keyframes shadowPulse {
+  0%, 100% { transform: translateX(-50%) scale(1); opacity: 1; }
+  42% { transform: translateX(-50%) scale(0.45); opacity: 0.4; }
+}
+.coin.landed { animation: coinLand 0.5s cubic-bezier(0.2, 1.7, 0.4, 1); }
+@keyframes coinLand {
+  0% { transform: scale(1.45); }
+  55% { transform: scale(0.94); }
+  100% { transform: scale(1); }
+}
+.toss-result {
+  text-align: center;
+  font-family: "Caveat", cursive;
+  font-size: 1.6rem;
+  color: var(--ink-dark);
+  min-height: 1.4em;
+  margin: 14px 0 0;
+}
+
+.toss-result .ok { color: var(--ok)}
+
+.choice-row { display: flex; gap: 10px;}
+
+.choice-row .btn { flex: 1; margin-top: 4px; }
+.choice-sub {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--ink-light);
+  font-weight: normal;
+  margin-top: 2px;
+}
+
+/* order editor */
+.orders-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.order-box {
+  border: 2px dashed var(--line);
+  border-radius: 12px 8px 13px 7px;
+  padding: 10px;
+}
+.order-title {
+  font-family: "Caveat", cursive;
+  font-size: 1.25rem;
+  color: var(--ink-dark);
+  margin-bottom: 4px;
+}
+.order-hint { font-size: 0.85rem; color: var(--ink-light); margin-bottom: 8px; }
+.order-pool {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1.5px dotted #bbb;
+}
+.order-pool::before {
+  content: "your players:";
+  font-size: 0.85rem;
+  color: var(--ink-light);
+  align-self: center;
+}
+.order-box.no-pool-label .order-pool::before { content: none; }
+.order-list {
+  min-height: 44px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.order-chip, .pool-chip {
+  font-family: "Patrick Hand", cursive;
+  border: 2px solid var(--line);
+  background: var(--card);
+  border-radius: 10px 7px 11px 6px;
+  padding: 3px 12px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+.pool-chip:hover { background: var(--accent); }
+.order-chip {
+  cursor: default;
+  background: var(--accent);
+  border-color: var(--ink-dark);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.order-chip .ord-pos {
+  font-family: "Caveat", cursive;
+  font-weight: 700;
+  color: var(--ink-dark);
+  margin-right: 4px;
+}
+.order-chip .ord-x {
+  cursor: pointer;
+  color: var(--bad);
+  display: flex;
+  align-items: center;
+}
+.order-chip .ord-x:hover { transform: scale(1.25); }
+/* empty numbered slot — shows exactly where the next name goes */
+.order-slot {
+  border: 2px dotted #ccc;
+  background: transparent;
+  border-radius: 10px 7px 11px 6px;
+  padding: 3px 12px;
+  font-size: 1rem;
+  color: var(--ink-light);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+}
+.order-slot .ord-pos {
+  font-family: "Caveat", cursive;
+  font-weight: 700;
+  color: #bbb;
+}
+.order-empty { color: var(--ink-light); font-size: 0.9rem; }
+
+/* ---------- bowler picker (between overs) ---------- */
+.bowler-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.bowler-row .btn { margin-top: 0; }
+.bowler-wait {
+  color: var(--ink-light);
+  font-family: "Caveat", cursive;
+  font-size: 1.3rem;
+}
+
+/* ---------- innings break ---------- */
+#break-panel { border-color: var(--ok); }
+#break-order-box { margin-bottom: 10px; }
+
+/* ---------- responsive ---------- */
+@media (max-width: 520px) {
+  h1 { font-size: 2.7rem; }
+  .score-runs { font-size: 2.4rem; }
+  .score-mid { min-width: 90px; }
+  .num-row { grid-template-columns: repeat(3, 1fr); }
+  .num-btn { min-height: 80px; }
+  .arena { padding: 14px 4px; }
+  .hand-slot { min-height: 120px; }
+  .result-stamp { font-size: 4rem; }
+  .orders-grid { grid-template-columns: 1fr; }
+  .toss-callers { flex-direction: column; }
+  .coin-slot { order: -1; margin-bottom: 6px; }
+  .choice-row { flex-direction: column; }
+}
