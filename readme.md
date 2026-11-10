@@ -13,7 +13,7 @@ The game support two mode :
 
 ## Quick playing:
 
-Use [this](https://coderx838.github.io/HandCricket/)  demo link for playing the game.
+Use [this](https://coderx838.github.io/HandCricket/) link for playing the game.
 
 Its fully working and you can also play with friend via invite like.
 
