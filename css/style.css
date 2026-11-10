@@ -23,9 +23,9 @@ html, body {
     padding: 0;
     background: var(--paper);
     color: var(--ink);
-    font-family: "Patrick Hand", "Cosmic Sans MS", cursive;
+    font-family: "Patrick Hand", "Comic Sans MS", cursive;
     font-size: 18px;
-    line-height: 1.5px;
+    line-height: 1.5;
     min-height: 100%;
 }
 
@@ -130,7 +130,7 @@ h1 {
     stroke-width: 1.9;
     stroke-linecap: round;
     stroke-linejoin: round;
-    color: var(--ino-dark);
+    color: var(--ink-dark);
 }
 
 .ico {
@@ -138,11 +138,13 @@ h1 {
     height: 1em;
     fill: none;
     stroke: currentColor;
-    stroke-width: 1.9;
+    stroke-width: 2.4;
     stroke-linecap: round;
     stroke-linejoin: round;
-    color: var(--ink-dark);
+    vertical-align: -0.14em;
 }
+
+.center-hint { text-align: center; }
 
 
 /* -------------- buttons -------------------- */
@@ -165,20 +167,11 @@ h1 {
 .text-input {
     font-family: "Patrick Hand", cursive;
     font-size: 1.1rem;
-    width:100%;
+    width: 100%;
     padding: 10px 14px;
     border: 2.5px solid var(--line);
     border-radius: 12px 8px 12px 7px;
-    color: var(--paper);
-    outline: none;
-}
-.text-input {
-    font-family: "Patrick Hand", cursive;
-    font-size: 1.1rem;
-    width: 100%;
-    padding: 10px 14px;
-    border: 2.5 solid var(--line);
-    border-radius: var(--paper);
+    background: var(--paper);
     color: var(--ink-dark);
     outline: none;
 }
@@ -213,7 +206,7 @@ h1 {
     width: 100%;
     font-size: 1.35rem;
     padding: 14px 18px;
-    margin: 10px;
+    margin-top: 10px;
 }
 
 .btn.active {
@@ -245,7 +238,7 @@ h1 {
     margin: 0;
     padding-left: 1.1rem;
 }
-.rule li { margin: 4px 0;}
+.rules li { margin: 4px 0;}
 
 /*  lobby  */
 
@@ -298,7 +291,7 @@ h1 {
     padding: 14px 12px;
     text-align: center;
 }
-.scrore-side { flex: 1; min-width: 0;}
+.score-side { flex: 1; min-width: 0;}
 .score-team {
     font-family: "Caveat", cursive;
     font-size: 1.3rem;
@@ -372,7 +365,7 @@ h1 {
     padding: 20px 10px;
     min-height: 220px;
     text-align: center;
-    transform: transform 0.05s;
+    transition: transform 0.05s;
 }
 
 .arena.shake { animation: shake 0.35s linear;}
@@ -436,6 +429,7 @@ h1 {
     position: absolute;
     font-family: "Caveat", cursive;
     font-size: 2.4rem;
+    font-weight: 700;
     animation: pop 0.4s cubic-bezier(0.2, 1.6, 0.4, 1);
     white-space: nowrap;
 }
@@ -461,7 +455,7 @@ h1 {
     stroke: var(--ink-dark);
     stroke-width: 2.8;
     stroke-linecap: round;
-
+    stroke-linejoin: round;
 }
 
 .hand-svg .hand-fold{
@@ -547,7 +541,7 @@ h1 {
 .ball-log {
     max-height: 160px;
     overflow-y: auto;
-    font-size: 1.05px;
+    font-size: 1.05rem;
 }
 .log-line {
     padding: 4px 2px;
@@ -580,7 +574,7 @@ h1 {
 }
 
 .result-stamp.win { color: var(--ok);}
-.result-burst.lose { color: var(--bad);}
+.result-stamp.lose { color: var(--bad);}
 .result-stamp.tie { color: var(--ink-dark)}
 
 @keyframes slam {
@@ -611,7 +605,7 @@ footer a {color: var(--ink);}
 
 /* ------------- caption / lobby roles ------------- */
 
-.caption-badge {
+.captain-badge {
     display: inline-block;
     font-size: 0.8em;
     color: #a07d20;
@@ -621,7 +615,7 @@ footer a {color: var(--ink);}
     margin-left: 6px;
     vertical-align: middle;
 }
-.caption-btn{
+.captain-btn{
     font-size: 0.9rem;
     padding: 2px 10px;
     margin: 0;
@@ -641,8 +635,8 @@ footer a {color: var(--ink);}
 }
 
 .step {
-    color: var(--ink-dark);
-    border: 2.5px solid var(--ink-dark);
+    font-size: 0.95rem;
+    color: var(--ink-light);
     border: 2px dashed #ccc;
     border-radius: 10px 6px 11px 5px;
     padding: 2px 12px;
@@ -652,7 +646,7 @@ footer a {color: var(--ink);}
 .step.active {
     color: var(--ink-dark);
     border: 2.5px solid var(--ink-dark);
-    border-radius: var(--accent);
+    background: var(--accent);
     font-weight: bold;
 }
 

@@ -7,7 +7,7 @@ const Game = (() => {
 
     const defaultState = () => ({
         phase: "idle", 
-        team: {
+        teams: {
             A: { runs: 0 , wickets: 0, balls: 0 , battingOrder: [], batIdx: 0, bowlingOrder: [], bowlIdx: 0},
             B: { runs: 0 , wickets: 0, balls: 0 , battingOrder: [], batIdx: 0, bowlingOrder: [], bowlIdx: 0},
         },
@@ -54,7 +54,7 @@ const Game = (() => {
 
     }
 
-    function currentBowler(state, player){
+    function currentBowler(state, players){
         const t = bowlingSide(state);
         if (!t.bowlingOrder.length) return null;
         return players.find((p) => p.id === t.bowlingOrder[t.bowlIdx % t.bowlingOrder.length]) || null;
@@ -67,7 +67,7 @@ const Game = (() => {
 
     /* ------------ */
     async function makeCommit(pick, salt){
-        const data = new TextEncoder().encode(`$(pick):$(salt)`);
+        const data = new TextEncoder().encode(`${pick}:${salt}`);
         const buf = await crypto.subtle.digest("SHA-256", data);
         return Array.from(new Uint8Array(buf))
         .map((b) => b.toString(16).padStart(2, "0"))
@@ -128,12 +128,12 @@ const Game = (() => {
         state.awaiting = "both";
 
 
-        const inningOver =
+        const inningsOver =
             st.balls >= BALLS ||
             st.wickets >= WICKETS ||
             (state.target != null && st.runs >= state.target);
         
-        if (inningOver){
+        if (inningsOver){
             if (state.innings === 1){
                 state.phase = "break";
                 state.target = st.runs + 1;
@@ -145,9 +145,9 @@ const Game = (() => {
         
         return {
             state,
-            overEnded: overEnded && !inningOver,
-            inningOver,
-            phaseChaged: inningOver,
+            overEnded: overEnded && !inningsOver,
+            inningsOver,
+            phaseChanged: inningsOver,
         };
         
     }
@@ -156,10 +156,11 @@ const Game = (() => {
     function startInnings2(state){
         state.innings = 2;
         const tmp = state.batting;
-        state.batting = state.bowling
+        state.batting = state.bowling;
+        state.bowling = tmp;
         state.teams[state.batting].batIdx = 0;
         state.teams[state.bowling].bowlIdx = 0;
-        state.commit = {};
+        state.commits = {};
         state.reveals = {};
         state.awaiting = "both";
         state.phase = "live";
@@ -196,7 +197,7 @@ const Game = (() => {
     }
 
     function setTossChoice(state, choice){
-        if (state.toss.step !== "choise") return false;
+        if (state.toss.step !== "choice") return false;
         if (choice !== "bat" &&  choice !== "bowl") return false;
         state.toss.choice = choice;
         const w = state.toss.winner;
@@ -217,12 +218,12 @@ const Game = (() => {
 
 
     // auto fills the order for size-1 teams 
-    function autoLockSmallTeams(state, player){
+    function autoLockSmallTeams(state, players){
         for (const t of ["A", "B"]) {
-            const ps = teamPlayers(player, t);
+            const ps = teamPlayers(players, t);
             if (ps.length == 1 && !state.toss.ordersLocked[t]){
                 state.teams[t].battingOrder = [ps[0].id];
-                state.team[t].bowlingOrder = [ps[0].id];
+                state.teams[t].bowlingOrder = [ps[0].id];
                 state.toss.ordersLocked[t] = true;
             }
             if (ps.length === 0) return false;
@@ -251,20 +252,21 @@ const Game = (() => {
 
 
     function startFromToss(state){
-        state.phone = "live";
+        state.phase = "live";
         state.innings = 1;
         state.target = null;
         state.ballNo = 0;
         state.awaiting = "both";
-        state.reveals = {}
+        state.commits = {};
+        state.reveals = {};
         state.pendingBowler = false;
         state.awaitingBreakReady = false;
         for (const t of ["A", "B"]){
             state.teams[t].runs = 0;
             state.teams[t].wickets = 0;
-            state.teams[t].balls =0;
-            state.team[t].batIdx = 0;
-            state.team[t].bowlIdx = 0;
+            state.teams[t].balls = 0;
+            state.teams[t].batIdx = 0;
+            state.teams[t].bowlIdx = 0;
         }
         return state;
     }
@@ -277,8 +279,8 @@ const Game = (() => {
         state.phase = "live";
         for (const t of ["A", "B"]){
             const ps = teamPlayers(players, t).map((p) => p.id)
-            state.team[t].battingOrder = ps;
-            state.team[t].bowlingOrder = ps;
+            state.teams[t].battingOrder = ps;
+            state.teams[t].bowlingOrder = ps;
         }
         const tossTeam = players.find((p) => p.id === tossWinnerId)?.team || "A";
         state.batting = tossTeam;
@@ -291,7 +293,7 @@ const Game = (() => {
     function whoPicks(state, players){
         return {
             batId : currentBatter(state, players)?.id,
-            bowlId: currentBatter(state, players)?.id,
+            bowlId: currentBowler(state, players)?.id,
         };
     }
 
@@ -337,6 +339,7 @@ const Game = (() => {
         resolveBall,
         startInnings2,
         startMatch,
+        startFromToss,
         whoPicks,
         makeBot,
         setTossCall,

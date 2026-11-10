@@ -1,3 +1,6 @@
 # Hand Cricket 
 
-*Just an online version of hand cricket for all its lovers.*
+(*A online version of hand cricket made with pencil*)
+
+
+
